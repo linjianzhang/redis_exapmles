@@ -42,7 +42,7 @@ mkdir -p /data/crm/crmcache/redis/logs/
 cd /data/crm/crmcache/redis/conf
 cat>redis.conf
 #绑定ip，需要个性化
-bind 132.121.100.36
+bind 192.191.100.36
 #启用保护模式
 protected-mode yes
 #绑定的服务端口，需要个性化
@@ -132,12 +132,12 @@ ps -ef|grep redis|grep -v grep
 所有master节点都按照以上步骤安装部署完毕后，即可执行以下流程配置主集群
 登录其中一个master节点执行以下命令
 cd /data/crm/crmcache/redis/bin
-./redis-cli -c -p 6379 -h 132.121.100.36 cluster meet 132.121.100.43 6379
-./redis-cli -c -p 6379 -h 132.121.100.36 cluster meet 132.121.100.51 6379
-./redis-cli -c -p 6379 -h 132.121.100.43 cluster meet 132.121.100.36 6379
-./redis-cli -c -p 6379 -h 132.121.100.43 cluster meet 132.121.100.51 6379
-./redis-cli -c -p 6379 -h 132.121.100.51 cluster meet 132.121.100.36 6379
-./redis-cli -c -p 6379 -h 132.121.100.51 cluster meet 132.121.100.43 6379
+./redis-cli -c -p 6379 -h 192.191.100.36 cluster meet 192.191.100.43 6379
+./redis-cli -c -p 6379 -h 192.191.100.36 cluster meet 192.191.100.51 6379
+./redis-cli -c -p 6379 -h 192.191.100.43 cluster meet 192.191.100.36 6379
+./redis-cli -c -p 6379 -h 192.191.100.43 cluster meet 192.191.100.51 6379
+./redis-cli -c -p 6379 -h 192.191.100.51 cluster meet 192.191.100.36 6379
+./redis-cli -c -p 6379 -h 192.191.100.51 cluster meet 192.191.100.43 6379
 ```
 ### 分配slot
 ```
@@ -147,7 +147,7 @@ end_slots=5461
 i=${start_slots}
 while [ $i -le $end_slots ]
 do
-   ./redis-cli -c -h 132.121.100.36 -p 6379 cluster addslots ${i}
+   ./redis-cli -c -h 192.191.100.36 -p 6379 cluster addslots ${i}
    i=$(($i+1))
 done
 
@@ -156,7 +156,7 @@ end_slots=10921
 i=${start_slots}
 while [ $i -le $end_slots ]
 do
-   ./redis-cli -c -h 132.121.100.43 -p 6379 cluster addslots ${i}
+   ./redis-cli -c -h 192.191.100.43 -p 6379 cluster addslots ${i}
    i=$(($i+1))
 done
 
@@ -165,14 +165,14 @@ end_slots=16383
 i=${start_slots}
 while [ $i -le $end_slots ]
 do
-   ./redis-cli -c -h 132.121.100.51 -p 6379 cluster addslots ${i}
+   ./redis-cli -c -h 192.191.100.51 -p 6379 cluster addslots ${i}
    i=$(($i+1))
 done
 ```
 ### 查看主集群信息
 ```
 cd /data/crm/crmcache/redis/bin
-./redis-cli -c -h 132.121.100.36 -p 6379 cluster nodes
+./redis-cli -c -h 192.191.100.36 -p 6379 cluster nodes
 ```
 
 ## 配置从集群
@@ -181,10 +181,10 @@ cd /data/crm/crmcache/redis/bin
 1.副集群无需分配slot
 2.启动副集群redis，然后登陆：
 cd /data/crm/crmcache/redis/bin/
-./redis-cli -c -p 7379 -h 132.121.100.36 cluster meet 132.121.100.36 6379 #连接主节点的ip和端口
-./redis-cli -c -p 7379 -h 132.121.100.36 cluster nodes #查看主从的nodes
-./redis-cli -c -p 7379 -h 132.121.100.36 cluster replicate 08b0b22104f6240d40490782ac1f27786fd1337f #建立主从连接
-./redis-cli -c -p 7379 -h 132.121.100.36 readonly #从节点设置为只读
+./redis-cli -c -p 7379 -h 192.191.100.36 cluster meet 192.191.100.36 6379 #连接主节点的ip和端口
+./redis-cli -c -p 7379 -h 192.191.100.36 cluster nodes #查看主从的nodes
+./redis-cli -c -p 7379 -h 192.191.100.36 cluster replicate 08b0b22104f6240d40490782ac1f27786fd1337f #建立主从连接
+./redis-cli -c -p 7379 -h 192.191.100.36 readonly #从节点设置为只读
 ```
 
 ### 启动zookeeper
@@ -202,7 +202,7 @@ pkill redis-server
 ### 查看集群信息
 ```
 cd /data/crm/crmcache/redis/bin
-./redis-cli -c -h 132.121.100.36 -p 6379 cluster nodes
+./redis-cli -c -h 192.191.100.36 -p 6379 cluster nodes
  ```
 
 
